@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<!--
+Luis Barrientos
+todo-app.html  
+October 16, 2025
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List App - Luis Barrientos</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .todo-container {
+            max-width: 500px;
+            margin: 2rem auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+        
+        .todo-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .todo-input {
+            display: flex;
+            padding: 1.5rem;
+            gap: 10px;
+            background: #f8f9fa;
+        }
+        
+        .todo-input input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        
+        .todo-input button {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
+        .todo-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .todo-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+        
+        .todo-item:hover {
+            background: #f8f9fa;
+        }
+        
+        .todo-item.completed {
+            opacity: 0.6;
+            text-decoration: line-through;
+        }
+        
+        .todo-item input[type="checkbox"] {
+            margin-right: 12px;
+            transform: scale(1.2);
+        }
+        
+        .todo-text {
+            flex: 1;
+            font-size: 16px;
+        }
+        
+        .delete-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .stats {
+            padding: 1rem 1.5rem;
+            background: #f8f9fa;
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="images/profile.jpg" alt="Luis Barrientos Profile Picture" height="150" width="150" class="profile-img">
+        <div>
+            <h1>Luis Barrientos</h1>
+            <h2>To-Do List Application Project</h2>
+        </div>
+    </header>
+
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="calculator.html">Calculator</a>
+        <a href="todo-app.html">To-Do App</a>
+    </nav>
+
+    <main>
+        <div id="todo-content">
+            <h3>📝 Interactive To-Do List</h3>
+            <p>A dynamic task management application with local storage to save your tasks between sessions.</p>
+            
+            <div class="todo-container">
+                <div class="todo-header">
+                    <h4>My Tasks</h4>
+                </div>
+                
+                <div class="todo-input">
+                    <input type="text" id="taskInput" placeholder="Add a new task..." maxlength="100">
+                    <button onclick="addTask()">Add Task</button>
+                </div>
+                
+                <div class="todo-list" id="todoList">
+                    <!-- Tasks will be added here dynamically -->
+                </div>
+                
+                <div class="stats" id="stats">
+                    0 tasks remaining
+                </div>
+            </div>
+            
+            <div class="project-info">
+                <h4>Technical Features:</h4>
+                <ul>
+                    <li>✅ Local Storage - Tasks persist between browser sessions</li>
+                    <li>✅ Dynamic DOM manipulation with JavaScript</li>
+                    <li>✅ Interactive checkboxes for task completion</li>
+                    <li>✅ Real-time task counter and statistics</li>
+                    <li>✅ Responsive design with smooth animations</li>
+                    <li>✅ Input validation and user feedback</li>
+                    <li>✅ Delete functionality with confirmation</li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Luis Barrientos | <a href="mailto:Bowzze@gmail.com">Bowzze@gmail.com</a></p>
+    </footer>
+
+    <script>
+        let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+
+        function saveTasks() {
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+        }
+
+        function renderTasks() {
+            const todoList = document.getElementById('todoList');
+            todoList.innerHTML = '';
+            
+            tasks.forEach((task, index) => {
+                const taskElement = document.createElement('div');
+                taskElement.className = `todo-item ${task.completed ? 'completed' : ''}`;
+                taskElement.innerHTML = `
+                    <input type="checkbox" ${task.completed ? 'checked' : ''} 
+                           onchange="toggleTask(${index})">
+                    <span class="todo-text">${task.text}</span>
+                    <button class="delete-btn" onclick="deleteTask(${index})">Delete</button>
+                `;
+                todoList.appendChild(taskElement);
+            });
+            
+            updateStats();
+        }
+
+        function addTask() {
+            const input = document.getElementById('taskInput');
+            const text = input.value.trim();
+            
+            if (text === '') {
+                alert('Please enter a task!');
+                return;
+            }
+            
+            tasks.push({
+                text: text,
+                completed: false,
+                id: Date.now()
+            });
+            
+            input.value = '';
+            saveTasks();
+            renderTasks();
+        }
+
+        function toggleTask(index) {
+            tasks[index].completed = !tasks[index].completed;
+            saveTasks();
+            renderTasks();
+        }
+
+        function deleteTask(index) {
+            if (confirm('Are you sure you want to delete this task?')) {
+                tasks.splice(index, 1);
+                saveTasks();
+                renderTasks();
+            }
+        }
+
+        function updateStats() {
+            const remaining = tasks.filter(task => !task.completed).length;
+            const total = tasks.length;
+            const completed = total - remaining;
+            
+            document.getElementById('stats').textContent = 
+                `${remaining} tasks remaining • ${completed} completed • ${total} total`;
+        }
+
+        // Enter key support
+        document.getElementById('taskInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                addTask();
+            }
+        });
+
+        // Load tasks when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            renderTasks();
+        });
+    </script>
+</body>
+</html>

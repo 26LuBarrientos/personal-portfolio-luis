@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<!--
+Luis Barrientos
+color-generator.html  
+October 16, 2025
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Palette Generator - Luis Barrientos</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .generator-container {
+            max-width: 800px;
+            margin: 2rem auto;
+        }
+        
+        .controls {
+            text-align: center;
+            margin-bottom: 2rem;
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .generate-btn {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(238, 90, 36, 0.3);
+        }
+        
+        .palette-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .color-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .color-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .color-preview {
+            height: 120px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+        
+        .color-info {
+            padding: 1rem;
+            text-align: center;
+        }
+        
+        .color-code {
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+        
+        .copy-msg {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #27ae60;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            display: none;
+            z-index: 1000;
+        }
+        
+        .saved-palettes {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-top: 2rem;
+        }
+        
+        .palette-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+        
+        .mini-color {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 2px solid white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="images/profile.jpg" alt="Luis Barrientos Profile Picture" height="150" width="150" class="profile-img">
+        <div>
+            <h1>Luis Barrientos</h1>
+            <h2>Color Palette Generator Project</h2>
+        </div>
+    </header>
+
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="calculator.html">Calculator</a>
+        <a href="todo-app.html">To-Do App</a>
+        <a href="color-generator.html">Color Generator</a>
+    </nav>
+
+    <main>
+        <div id="color-content">
+            <h3>🎨 Color Palette Generator</h3>
+            <p>Generate beautiful, harmonious color palettes for your design projects. Click any color to copy its hex code!</p>
+            
+            <div class="generator-container">
+                <div class="controls">
+                    <button class="generate-btn" onclick="generatePalette()">
+                        🎲 Generate New Palette
+                    </button>
+                    <p style="margin-top: 1rem; color: #666;">
+                        Click on any color to copy its hex code to clipboard
+                    </p>
+                </div>
+                
+                <div class="palette-grid" id="paletteGrid">
+                    <!-- Colors will be generated here -->
+                </div>
+                
+                <div class="saved-palettes">
+                    <h4>Recently Generated Palettes</h4>
+                    <div id="savedPalettes">
+                        <p style="color: #666; text-align: center;">Generate your first palette to see it here!</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="project-info">
+                <h4>Technical Features:</h4>
+                <ul>
+                    <li>✅ Dynamic color generation using HSL color space</li>
+                    <li>✅ Clipboard API integration for copying hex codes</li>
+                    <li>✅ Local storage for palette history</li>
+                    <li>✅ Responsive grid layout with CSS Grid</li>
+                    <li>✅ Smooth animations and hover effects</li>
+                    <li>✅ Color harmony algorithms for pleasing combinations</li>
+                    <li>✅ Interactive UI with real-time feedback</li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Luis Barrientos | <a href="mailto:Bowzze@gmail.com">Bowzze@gmail.com</a></p>
+    </footer>
+
+    <div class="copy-msg" id="copyMsg">Color code copied to clipboard!</div>
+
+    <script>
+        let savedPalettes = JSON.parse(localStorage.getItem('colorPalettes')) || [];
+
+        function generateRandomColor() {
+            const hue = Math.floor(Math.random() * 360);
+            const saturation = Math.floor(Math.random() * 50) + 50; // 50-100%
+            const lightness = Math.floor(Math.random() * 40) + 30;   // 30-70%
+            return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+        }
+
+        function hslToHex(hsl) {
+            const match = hsl.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
+            if (!match) return '#000000';
+            
+            const h = parseInt(match[1]) / 360;
+            const s = parseInt(match[2]) / 100;
+            const l = parseInt(match[3]) / 100;
+
+            const hue2rgb = (p, q, t) => {
+                if (t < 0) t += 1;
+                if (t > 1) t -= 1;
+                if (t < 1/6) return p + (q - p) * 6 * t;
+                if (t < 1/2) return q;
+                if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+                return p;
+            };
+
+            let r, g, b;
+            if (s === 0) {
+                r = g = b = l;
+            } else {
+                const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+                const p = 2 * l - q;
+                r = hue2rgb(p, q, h + 1/3);
+                g = hue2rgb(p, q, h);
+                b = hue2rgb(p, q, h - 1/3);
+            }
+
+            const toHex = (c) => {
+                const hex = Math.round(c * 255).toString(16);
+                return hex.length === 1 ? '0' + hex : hex;
+            };
+
+            return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+        }
+
+        function generateHarmoniousPalette() {
+            const baseHue = Math.floor(Math.random() * 360);
+            const colors = [];
+            
+            // Generate 5 harmonious colors
+            for (let i = 0; i < 5; i++) {
+                let hue = (baseHue + i * 72) % 360; // Pentadic harmony
+                const saturation = Math.floor(Math.random() * 30) + 60; // 60-90%
+                const lightness = Math.floor(Math.random() * 30) + 40;   // 40-70%
+                colors.push(`hsl(${hue}, ${saturation}%, ${lightness}%)`);
+            }
+            
+            return colors;
+        }
+
+        function generatePalette() {
+            const colors = generateHarmoniousPalette();
+            const paletteGrid = document.getElementById('paletteGrid');
+            paletteGrid.innerHTML = '';
+            
+            colors.forEach((color, index) => {
+                const hexColor = hslToHex(color);
+                const colorCard = document.createElement('div');
+                colorCard.className = 'color-card';
+                colorCard.onclick = () => copyToClipboard(hexColor);
+                
+                colorCard.innerHTML = `
+                    <div class="color-preview" style="background: ${color}">
+                        ${hexColor}
+                    </div>
+                    <div class="color-info">
+                        <div class="color-code">${hexColor}</div>
+                    </div>
+                `;
+                
+                // Animate card appearance
+                colorCard.style.opacity = '0';
+                colorCard.style.transform = 'translateY(20px)';
+                paletteGrid.appendChild(colorCard);
+                
+                setTimeout(() => {
+                    colorCard.style.transition = 'all 0.5s ease';
+                    colorCard.style.opacity = '1';
+                    colorCard.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+            
+            // Save palette
+            const palette = {
+                colors: colors.map(color => hslToHex(color)),
+                timestamp: new Date().toLocaleString()
+            };
+            savedPalettes.unshift(palette);
+            if (savedPalettes.length > 5) savedPalettes.pop();
+            localStorage.setItem('colorPalettes', JSON.stringify(savedPalettes));
+            
+            displaySavedPalettes();
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.then(() => {
+                navigator.clipboard.writeText(text);
+                showCopyMessage();
+            }).catch(() => {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showCopyMessage();
+            });
+        }
+
+        function showCopyMessage() {
+            const msg = document.getElementById('copyMsg');
+            msg.style.display = 'block';
+            setTimeout(() => {
+                msg.style.display = 'none';
+            }, 2000);
+        }
+
+        function displaySavedPalettes() {
+            const container = document.getElementById('savedPalettes');
+            if (savedPalettes.length === 0) {
+                container.innerHTML = '<p style="color: #666; text-align: center;">Generate your first palette to see it here!</p>';
+                return;
+            }
+            
+            container.innerHTML = '<h4>Recently Generated Palettes</h4>';
+            savedPalettes.forEach((palette, index) => {
+                const paletteItem = document.createElement('div');
+                paletteItem.className = 'palette-item';
+                paletteItem.innerHTML = `
+                    <div style="display: flex; gap: 5px;">
+                        ${palette.colors.map(color => 
+                            `<div class="mini-color" style="background: ${color}" 
+                                  onclick="copyToClipboard('${color}')" title="${color}"></div>`
+                        ).join('')}
+                    </div>
+                    <span style="color: #666; font-size: 12px;">${palette.timestamp}</span>
+                `;
+                container.appendChild(paletteItem);
+            });
+        }
+
+        // Initialize with a palette
+        document.addEventListener('DOMContentLoaded', function() {
+            generatePalette();
+            displaySavedPalettes();
+        });
+    </script>
+</body>
+</html>

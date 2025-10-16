@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<!--
+Luis Barrientos
+index.html  
+October 16, 2025
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luis Barrientos - Home</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header>
+        <img src="images/profile.jpg" alt="Luis Barrientos Profile Picture" height="150" width="150" class="profile-img">
+        <div>
+            <h1>Luis Barrientos</h1>
+            <h2>Driven to innovate and excel through technology and continuous learning</h2>
+        </div>
+    </header>
+
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="calculator.html">Calculator</a>
+        <a href="todo-app.html">To-Do App</a>
+        <a href="color-generator.html">Colors</a>
+        <a href="animation-gallery.html">Animations</a>
+    </nav>
+
+    <!-- Main content area showcasing welcome message and portfolio highlights -->
+    <main>
+        <div id="home-content">
+            <h3>Welcome to My Personal Portfolio! ✨</h3>
+            <p>Hello and welcome! I'm Luis Barrientos, a dedicated student at Mayfield Excel Tecc. This portfolio showcases my journey in technology, learning, and personal growth.</p>
+            
+            <h4>What You'll Find Here:</h4>
+            <section class="highlights">
+                <ul>
+                    <li>📚 My educational background and technical training at Mayfield Excel Tecc</li>
+                    <li>� Professional skills in programming, web development, and technology</li>
+                    <li>🚀 Coding projects including this responsive portfolio website</li>
+                    <li>⚡ Interactive JavaScript applications and problem-solving solutions</li>
+                    <li>🎯 Career goals in software development and technology innovation</li>
+                    <li>📊 Data analysis projects and Microsoft Office expertise</li>
+                    <li>� Web design projects showcasing modern CSS and HTML5</li>
+                    <li>📞 Professional networking and collaboration opportunities</li>
+                </ul>
+            </section>
+            
+            <section class="projects-preview">
+                <h4>Featured Mini-Projects:</h4>
+                <div class="project-grid">
+                    <a href="calculator.html" class="project-card">
+                        <h5>🎯 Interactive Calculator</h5>
+                        <p>JavaScript-powered calculator with responsive design</p>
+                        <span class="project-link">Click to try it! →</span>
+                    </a>
+                    <a href="animation-gallery.html" class="project-card">
+                        <h5>🌈 CSS Animation Gallery</h5>
+                        <p>Creative animations showcasing advanced CSS techniques</p>
+                        <span class="project-link">View animations! →</span>
+                    </a>
+                    <a href="todo-app.html" class="project-card">
+                        <h5>📝 To-Do List App</h5>
+                        <p>Dynamic task management with local storage integration</p>
+                        <span class="project-link">Manage tasks! →</span>
+                    </a>
+                    <a href="color-generator.html" class="project-card">
+                        <h5>🎨 Color Palette Generator</h5>
+                        <p>Random color generator for design and development projects</p>
+                        <span class="project-link">Generate colors! →</span>
+                    </a>
+                </div>
+            </section>
+            
+            <p>I believe in continuous learning and strive to make a positive impact through technology and innovation. Feel free to explore and get to know more about my journey!</p>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Luis Barrientos | <a href="mailto:Bowzze@gmail.com">Bowzze@gmail.com</a></p>
+    </footer>
+
+    <script>
+        // Add interactive animations and effects
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate project cards on load
+            const projectCards = document.querySelectorAll('.project-card');
+            projectCards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 150);
+            });
+
+            // Add click effects to project cards
+            projectCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    this.style.transform = 'scale(0.98)';
+                    setTimeout(() => {
+                        this.style.transform = 'scale(1)';
+                    }, 100);
+                });
+            });
+
+            // Dynamic greeting based on time
+            const now = new Date();
+            const hour = now.getHours();
+            let greeting = 'Welcome to My Personal Portfolio!';
+            
+            if (hour < 12) {
+                greeting = 'Good Morning! Welcome to My Personal Portfolio!';
+            } else if (hour < 17) {
+                greeting = 'Good Afternoon! Welcome to My Personal Portfolio!';
+            } else {
+                greeting = 'Good Evening! Welcome to My Personal Portfolio!';
+            }
+            
+            const welcomeHeader = document.querySelector('#home-content h3');
+            if (welcomeHeader) {
+                welcomeHeader.textContent = greeting + ' ✨';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<!--
+Luis Barrientos
+calculator.html  
+October 16, 2025
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Calculator - Luis Barrientos</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .calculator {
+            max-width: 300px;
+            margin: 2rem auto;
+            background: linear-gradient(135deg, #34495e, #2c3e50);
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+        
+        .display {
+            background: #000;
+            color: #0f0;
+            font-family: 'Courier New', monospace;
+            font-size: 1.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            text-align: right;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+        }
+        
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            padding: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .operator {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+        
+        .equals {
+            background: linear-gradient(135deg, #27ae60, #229954);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="images/profile.jpg" alt="Luis Barrientos Profile Picture" height="150" width="150" class="profile-img">
+        <div>
+            <h1>Luis Barrientos</h1>
+            <h2>Interactive Calculator Project</h2>
+        </div>
+    </header>
+
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="calculator.html">Calculator</a>
+        <a href="todo-app.html">To-Do App</a>
+        <a href="color-generator.html">Colors</a>
+        <a href="animation-gallery.html">Animations</a>
+    </nav>
+
+    <main>
+        <div id="calculator-content">
+            <h3>🎯 Interactive Calculator</h3>
+            <p>A fully functional calculator built with HTML, CSS, and JavaScript. Features a retro digital display and smooth animations.</p>
+            
+            <div class="calculator">
+                <div class="display" id="display">0</div>
+                <div class="buttons">
+                    <button class="btn" onclick="clearDisplay()">C</button>
+                    <button class="btn" onclick="deleteLast()">⌫</button>
+                    <button class="btn operator" onclick="appendToDisplay('/')">/</button>
+                    <button class="btn operator" onclick="appendToDisplay('*')">×</button>
+                    
+                    <button class="btn" onclick="appendToDisplay('7')">7</button>
+                    <button class="btn" onclick="appendToDisplay('8')">8</button>
+                    <button class="btn" onclick="appendToDisplay('9')">9</button>
+                    <button class="btn operator" onclick="appendToDisplay('-')">-</button>
+                    
+                    <button class="btn" onclick="appendToDisplay('4')">4</button>
+                    <button class="btn" onclick="appendToDisplay('5')">5</button>
+                    <button class="btn" onclick="appendToDisplay('6')">6</button>
+                    <button class="btn operator" onclick="appendToDisplay('+')">+</button>
+                    
+                    <button class="btn" onclick="appendToDisplay('1')">1</button>
+                    <button class="btn" onclick="appendToDisplay('2')">2</button>
+                    <button class="btn" onclick="appendToDisplay('3')">3</button>
+                    <button class="btn equals" onclick="calculate()" rowspan="2">=</button>
+                    
+                    <button class="btn" onclick="appendToDisplay('0')" style="grid-column: span 2;">0</button>
+                    <button class="btn" onclick="appendToDisplay('.')">.</button>
+                </div>
+            </div>
+            
+            <div class="project-info">
+                <h4>Technical Features:</h4>
+                <ul>
+                    <li>✅ Responsive design that works on all devices</li>
+                    <li>✅ Smooth CSS animations and hover effects</li>
+                    <li>✅ JavaScript event handling and DOM manipulation</li>
+                    <li>✅ Error handling for invalid calculations</li>
+                    <li>✅ Retro-styled digital display with green text</li>
+                    <li>✅ Grid-based button layout</li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Luis Barrientos | <a href="mailto:Bowzze@gmail.com">Bowzze@gmail.com</a></p>
+    </footer>
+
+    <script>
+        let display = document.getElementById('display');
+        let currentInput = '0';
+        let shouldResetDisplay = false;
+
+        function updateDisplay() {
+            display.textContent = currentInput;
+        }
+
+        function clearDisplay() {
+            currentInput = '0';
+            shouldResetDisplay = false;
+            updateDisplay();
+        }
+
+        function deleteLast() {
+            if (currentInput.length > 1) {
+                currentInput = currentInput.slice(0, -1);
+            } else {
+                currentInput = '0';
+            }
+            updateDisplay();
+        }
+
+        function appendToDisplay(value) {
+            if (shouldResetDisplay) {
+                currentInput = '0';
+                shouldResetDisplay = false;
+            }
+            
+            if (currentInput === '0' && value !== '.') {
+                currentInput = value;
+            } else {
+                currentInput += value;
+            }
+            updateDisplay();
+        }
+
+        function calculate() {
+            try {
+                // Replace × with * for calculation
+                let expression = currentInput.replace(/×/g, '*');
+                let result = eval(expression);
+                
+                if (isNaN(result) || !isFinite(result)) {
+                    currentInput = 'Error';
+                } else {
+                    currentInput = result.toString();
+                }
+                shouldResetDisplay = true;
+            } catch (error) {
+                currentInput = 'Error';
+                shouldResetDisplay = true;
+            }
+            updateDisplay();
+        }
+
+        // Keyboard support
+        document.addEventListener('keydown', function(event) {
+            const key = event.key;
+            if ('0123456789'.includes(key) || key === '.') {
+                appendToDisplay(key);
+            } else if ('+-*/'.includes(key)) {
+                appendToDisplay(key === '*' ? '×' : key);
+            } else if (key === 'Enter' || key === '=') {
+                calculate();
+            } else if (key === 'Escape' || key === 'c' || key === 'C') {
+                clearDisplay();
+            } else if (key === 'Backspace') {
+                deleteLast();
+            }
+        });
+    </script>
+</body>
+</html>
